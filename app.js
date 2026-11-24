@@ -1,0 +1,54 @@
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const Listing = require("./models/listing.js");
+const path = require("path");
+
+const MONGO_URL = "mongodb://127.0.0.1:27017/Musafir";
+
+//connect the mongodb
+main()
+    .then(() => {
+        console.log("connected to DB");
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+async function main() {
+    await mongoose.connect(MONGO_URL);
+}
+
+// set view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+//here basic api
+app.get("/", (req, res) => {
+    res.send("Hi, I am root");
+})
+
+// Index Route
+app.get("/listings", async (req, res) => {
+    const allListing = await Listing.find({});
+    res.render("listings/index.ejs", { allListing });
+});
+
+// Test Listing
+// app.get("/testListing", async (req, res) => {
+//     let sampleListing = new Listing({
+//         title: "My New Villa",
+//         description: "By the beach",
+//         price: 1200,
+//         location: "Calagute, Goa",
+//         country: "India",
+//     });
+
+//     await sampleListing.save();
+//     console.log("sample was saved");
+//     res.send("successful testing");
+// }); 
+
+//here we design the port number
+app.listen(8080, () => {
+    console.log("server is listening to port 8080");
+})
